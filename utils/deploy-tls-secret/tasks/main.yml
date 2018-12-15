@@ -1,0 +1,15 @@
+- file:
+    path: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/tls-data/{{name}}"
+    state: "directory"
+- copy:
+    src: "{{crt_path}}"
+    dest: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/tls-data/{{name}}/tls.crt"
+- copy:
+    src: "{{key_path}}"
+    dest: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/tls-data/{{name}}/tls.key"
+- name: Deploy TLS secret {{name}}
+  shell: >
+    kubectl create secret generic {{name}}
+    --from-file=tls.crt="{{utils_cache_app_root_path}}/{{app_name}}/k8s/tls-data/{{name}}/tls.crt"
+    --from-file=tls.key="{{utils_cache_app_root_path}}/cache/{{app_name}}/k8s/tls-data/{{name}}/tls.key"
+  ignore_errors: yes

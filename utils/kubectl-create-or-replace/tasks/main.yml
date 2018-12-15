@@ -1,0 +1,24 @@
+- name: Check `{{controller_kind}}/{{controller_name}}` availability
+  shell: kubectl get {{controller_kind}} | gawk 'NR>1 {if ($1 ~ /^{{controller_name}}$/) print $1}'
+  register: output
+- set_fact:
+    controller_deployed: "{{output.stdout_lines[0] is defined}}"
+
+- file:
+    path: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/{{controller_kind}}"
+    state: "directory"
+- name: Parse template `{{controller_template}}` -> `{{utils_cache_app_root_path}}/{{app_name}}/k8s/{{controller_kind}}/{{controller_name}}.yaml`
+  template:
+    src: "{{controller_template}}"
+    dest: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/{{controller_kind}}/{{controller_name}}.yaml"
+  register: output
+- set_fact:
+    controller_config_changed: "{{output.changed}}"
+
+- name: Create `{{controller_kind}}/{{controller_name}}` controller"
+  shell: kubectl create -f {{utils_cache_app_root_path}}/{{app_name}}/k8s/{{controller_kind}}/{{controller_name}}.yaml
+  when: controller_deployed == false
+
+- name: Replace `{{controller_kind}}/{{controller_name}}` controller
+  shell: kubectl replace -f {{utils_cache_app_root_path}}/{{app_name}}/k8s/{{controller_kind}}/{{controller_name}}.yaml
+  when: controller_deployed == true and controller_config_changed == true

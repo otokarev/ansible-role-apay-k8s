@@ -1,0 +1,13 @@
+- name: Create cluster
+  shell: >
+    gcloud container clusters create {{cluster_name}}
+    --cluster-version={{gke_cluster_version}}
+    --enable-legacy-authorization
+    --enable-cloud-monitoring
+    --no-enable-cloud-endpoints
+    --num-nodes=1
+    --machine-type={{machine_type}}
+    --disk-type={{disk_type}}
+    --zone={{zones[0]}} {% if zones[1] is defined %} --additional-zones={{zones[1]}} {% endif %}
+    --project={{project}}
+  ignore_errors: yes

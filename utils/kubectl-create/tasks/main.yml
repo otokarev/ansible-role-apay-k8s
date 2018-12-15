@@ -1,0 +1,10 @@
+- file:
+    path: "{{utils_cache_app_root_path}}/{{app_name}}/k8s"
+    state: "directory"
+- name: Parse `{{template}}`
+  template:
+    src: "{{template}}"
+    dest: "{{utils_cache_app_root_path}}/{{app_name}}/k8s/{{template|regex_replace('\\.j2$')}}"
+- name: Deploy {{template|regex_replace('\.yaml\.j2$')}}
+  shell: kubectl create -f {{utils_cache_app_root_path}}/{{app_name}}/k8s/{{template|regex_replace('\.j2$')}}
+  ignore_errors: yes

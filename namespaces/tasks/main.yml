@@ -1,0 +1,8 @@
+- name: Deploy namespaces
+  include_role:
+    name: k8s/utils/kubectl-create
+  vars:
+    template: namespaces.yaml.j2
+    namespace: "{{ item }}"
+  loop: "{{ namespaces }}"
+  ignore_errors: yes

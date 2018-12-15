@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{simsvc_name}}"
+spec:
+  selector:
+{% if simsvc_selector_app is defined %}
+    app: "{{simsvc_selector_app}}"
+{% endif %}
+{% if simsvc_selector_role is defined %}
+    role: "{{simsvc_selector_role}}"
+{% endif %}
+{% if simsvc_lb_ip is defined %}
+  type: LoadBalancer
+  loadBalancerIP: "{{simsvc_lb_ip}}"
+{% endif %}
+  ports:
+{% for port in simsvc_ports %}
+  - protocol: "{{port.protocol|default(TCP)}}"
+    port: {{port.port}}
+{% if port.name is defined %}
+    name: "{{port.name}}"
+{% endif %}
+{% if port.targetPort is defined %}
+    targetPort: "{{port.targetPort}}"
+{% endif %}
+{% endfor %}

@@ -1,0 +1,7 @@
+- name: Deploy {{simsvc_name}} service
+  include_role:
+    name: k8s/utils/kubectl-create-or-replace
+  vars:
+    controller_kind: svc
+    controller_template: simple-service.yaml.j2
+    controller_name: "{{simsvc_controller_name|default(simsvc_name)}}"
