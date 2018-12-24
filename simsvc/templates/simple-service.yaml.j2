@@ -13,6 +13,8 @@ spec:
 {% if simsvc_lb_ip is defined %}
   type: LoadBalancer
   loadBalancerIP: "{{simsvc_lb_ip}}"
+{% else %}
+  type: NodePort
 {% endif %}
   ports:
 {% for port in simsvc_ports %}
